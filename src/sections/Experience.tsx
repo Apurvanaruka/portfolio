@@ -7,7 +7,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const experiences = [
   {
-    title: 'Software Developer',
+    title: 'AI/ML Engineer',
     company: 'Unlock Technologies Pvt. Ltd.',
     location: 'Mumbai, India',
     period: 'July 2025 - Present',
