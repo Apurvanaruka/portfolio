@@ -1,213 +1,151 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { MapPin, Phone, Mail, Calendar, Download } from 'lucide-react';
+import SpotlightCard from '../components/SpotlightCard';
 
 gsap.registerPlugin(ScrollTrigger);
 
 const infoCards = [
-  {
-    icon: MapPin,
-    label: 'Location',
-    value: 'Mumbai, India',
-  },
-  {
-    icon: Phone,
-    label: 'Phone',
-    value: '(+91) 9602119226',
-  },
-  {
-    icon: Mail,
-    label: 'Email',
-    value: 'apurvanaruka1@gmail.com',
-  },
-  {
-    icon: Calendar,
-    label: 'Date of Birth',
-    value: 'July 1, 2002',
-  },
+  { icon: MapPin,     label: 'Location',       value: 'Andheri, Mumbai, India' },
+  { icon: Phone,      label: 'Phone',           value: '+91 9602119226' },
+  { icon: Mail,       label: 'Email',           value: 'apurvanaruka1@gmail.com' },
+  { icon: Calendar,   label: 'Date of Birth',   value: 'July 1, 2002' },
+];
+
+const stats = [
+  { value: '1+',  label: 'Years Experience' },
+  { value: '20+', label: 'Projects Completed' },
+  { value: '5+',  label: 'Awards & Honours' },
 ];
 
 export default function About() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const headingRef = useRef<HTMLHeadingElement>(null);
-  const cardsRef = useRef<HTMLDivElement>(null);
-  const textRef = useRef<HTMLDivElement>(null);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const sectionRef    = useRef<HTMLDivElement>(null);
+  const headingRef    = useRef<HTMLHeadingElement>(null);
+  const cardsRef      = useRef<HTMLDivElement>(null);
+  const textRef       = useRef<HTMLDivElement>(null);
+  const statsRef      = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      // Heading animation
+      // Heading slide-in
       gsap.fromTo(
         headingRef.current,
-        { opacity: 0, x: -50 },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 80%',
-          },
-        }
+        { opacity: 0, x: -60, filter: 'blur(6px)' },
+        { opacity: 1, x: 0, filter: 'blur(0px)', duration: 0.9, ease: 'power3.out',
+          scrollTrigger: { trigger: sectionRef.current, start: 'top 80%' } }
       );
 
-      // Cards stagger animation
+      // Info cards stagger
       const cards = cardsRef.current?.querySelectorAll('.info-card');
       if (cards) {
-        gsap.fromTo(
-          cards,
-          { opacity: 0, y: 30, rotateY: -15 },
-          {
-            opacity: 1,
-            y: 0,
-            rotateY: 0,
-            duration: 0.6,
-            stagger: 0.1,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: cardsRef.current,
-              start: 'top 85%',
-            },
-          }
+        gsap.fromTo(cards,
+          { opacity: 0, y: 30, scale: 0.92 },
+          { opacity: 1, y: 0, scale: 1, duration: 0.6, stagger: 0.1, ease: 'back.out(1.4)',
+            scrollTrigger: { trigger: cardsRef.current, start: 'top 85%' } }
         );
       }
 
-      // Text animation
-      gsap.fromTo(
-        textRef.current,
+      // Text reveal
+      gsap.fromTo(textRef.current,
         { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: textRef.current,
-            start: 'top 85%',
-          },
-        }
+        { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out',
+          scrollTrigger: { trigger: textRef.current, start: 'top 85%' } }
       );
+
+      // Stats counter pop
+      const statEls = statsRef.current?.querySelectorAll('.stat-item');
+      if (statEls) {
+        gsap.fromTo(statEls,
+          { opacity: 0, scale: 0.7 },
+          { opacity: 1, scale: 1, duration: 0.5, stagger: 0.12, ease: 'back.out(2)',
+            scrollTrigger: { trigger: statsRef.current, start: 'top 90%' } }
+        );
+      }
     }, sectionRef);
 
     return () => ctx.revert();
   }, []);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>, cardElement: HTMLDivElement) => {
-    const rect = cardElement.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width - 0.5) * 20;
-    const y = ((e.clientY - rect.top) / rect.height - 0.5) * -20;
-    setMousePosition({ x, y });
-  };
-
-  const handleMouseLeave = () => {
-    setMousePosition({ x: 0, y: 0 });
-  };
-
   return (
-    <section
-      id="about"
-      ref={sectionRef}
-      className="relative py-24 lg:py-32 overflow-hidden"
-    >
-      {/* Background decoration */}
+    <section id="about" ref={sectionRef} className="relative py-24 lg:py-32 overflow-hidden">
+      {/* Background blobs */}
       <div className="absolute top-0 right-0 w-1/3 h-1/3 bg-primary/5 rounded-full blur-3xl" />
       <div className="absolute bottom-0 left-0 w-1/4 h-1/4 bg-primary/5 rounded-full blur-3xl" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Section Heading */}
+        {/* Heading */}
         <div className="mb-16">
-          <h2
-            ref={headingRef}
-            className="text-3xl sm:text-4xl lg:text-5xl font-bold font-['Space_Grotesk'] text-foreground"
-          >
+          <h2 ref={headingRef} className="text-3xl sm:text-4xl lg:text-5xl font-bold font-['Space_Grotesk'] text-foreground">
             About <span className="text-gradient">Me</span>
           </h2>
-          <div className="mt-4 w-20 h-1 bg-primary rounded-full" />
+          <div className="mt-4 w-20 h-1 bg-gradient-to-r from-primary to-pink-500 rounded-full" />
         </div>
 
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16">
-          {/* Info Cards Grid */}
+          {/* Info Cards */}
           <div ref={cardsRef} className="grid grid-cols-2 gap-4">
             {infoCards.map((card) => (
-              <div
+              <SpotlightCard
                 key={card.label}
-                className="info-card group relative p-6 glass rounded-2xl cursor-pointer transition-all duration-300 hover:scale-105"
-                style={{
-                  transform: `perspective(1000px) rotateX(${mousePosition.y}deg) rotateY(${mousePosition.x}deg)`,
-                  transition: 'transform 0.1s ease-out',
-                }}
-                onMouseMove={(e) => handleMouseMove(e, e.currentTarget)}
-                onMouseLeave={handleMouseLeave}
+                spotlightColor="rgba(168, 85, 247, 0.10)"
+                className="info-card group relative p-6 glass rounded-2xl cursor-default"
               >
-                {/* Glow effect on hover */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-                <div className="relative">
+                <div className="relative z-10">
                   <div className="w-12 h-12 rounded-xl bg-primary/10 flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
-                    <card.icon className="text-primary" size={24} />
+                    <card.icon className="text-primary" size={22} />
                   </div>
-                  <p className="text-sm text-muted-foreground mb-1">{card.label}</p>
-                  <p className="text-foreground font-medium">{card.value}</p>
+                  <p className="text-xs text-muted-foreground mb-1 uppercase tracking-wider">{card.label}</p>
+                  <p className="text-foreground font-medium text-sm leading-snug">{card.value}</p>
                 </div>
-              </div>
+              </SpotlightCard>
             ))}
           </div>
 
           {/* About Text */}
-          <div ref={textRef} className="space-y-6">
+          <div ref={textRef} className="space-y-5">
             <p className="text-lg text-muted-foreground leading-relaxed">
-              B.Tech graduate and AI/ML Engineer with 1 year of hands-on experience in the fintech domain.
-              I specialize in building intelligent, scalable systems using Python, machine learning,
-              and artificial intelligence to solve real-world problems with measurable impact.
+              Production-focused AI/ML Engineer with hands-on experience designing, deploying,
+              and monitoring scalable AI systems in <span className="text-foreground font-medium">fintech and enterprise environments</span>.
+              Specialising in end-to-end AI pipeline architecture on Linux/AWS infrastructure —
+              from on-premise LLM hardware deployment to multi-agent AI platforms serving live
+              production traffic.
             </p>
 
             <p className="text-lg text-muted-foreground leading-relaxed">
-              My journey in AI/ML began during my undergraduate studies and evolved into real-world
-              production experience. I’ve worked across natural language processing and computer vision,
-              designing models that learn, adapt, and integrate seamlessly into business workflows.
+              I've built production eKYC systems (PAN/Aadhaar OCR, face match, liveness detection),
+              architected multi-agent AI platforms with MCP & A2A protocols, and fine-tuned LLMs
+              using <span className="text-foreground font-medium">LoRA/QLoRA</span> for domain-specific inference with
+              observability via Langfuse, Grafana, and Sentry.
             </p>
 
             <p className="text-lg text-muted-foreground leading-relaxed">
-              Currently working as a Software Developer at Unlock Technologies, I focus on AI-driven
-              fintech solutions including eKYC systems, AI agent orchestration, and secure application
-              deployment. I have strong hands-on experience with AWS services for building, deploying,
-              and scaling ML-powered applications in production environments.
+              Currently at <span className="text-primary font-medium">Unlock Technologies</span>,
+              I deliver compliant, high-availability AI microservices that reduce manual operational
+              effort and drive measurable business impact in fintech.
             </p>
-
 
             {/* Stats */}
-            <div className="grid grid-cols-3 gap-6 pt-6">
-              <div className="text-center">
-                <p className="text-3xl font-bold text-primary">1+</p>
-                <p className="text-sm text-muted-foreground mt-1">Years Experience</p>
-              </div>
-              <div className="text-center">
-                <p className="text-3xl font-bold text-primary">20+</p>
-                <p className="text-sm text-muted-foreground mt-1">Projects Completed</p>
-              </div>
-              <div className="text-center">
-                <p className="text-3xl font-bold text-primary">3+</p>
-                <p className="text-sm text-muted-foreground mt-1">Awards Won</p>
-              </div>
+            <div ref={statsRef} className="grid grid-cols-3 gap-4 pt-4">
+              {stats.map((s) => (
+                <div key={s.label} className="stat-item text-center p-4 glass rounded-xl">
+                  <p className="text-3xl font-bold text-gradient">{s.value}</p>
+                  <p className="text-xs text-muted-foreground mt-1 leading-snug">{s.label}</p>
+                </div>
+              ))}
             </div>
 
-            {/* Download Resume Button */}
-            <div className="pt-6">
-              <button
-                onClick={() => {
-                  // Create a simple resume PDF download
-                  const link = document.createElement('a');
-                  link.href = '/aimlengineer.pdf';
-                  link.download = 'Apurva_Singh_Resume.pdf';
-                  link.click();
-                }}
-                className="inline-flex items-center gap-2 px-6 py-3 bg-muted hover:bg-primary hover:text-primary-foreground rounded-full font-medium transition-all duration-300"
+            {/* View Resume */}
+            <div className="pt-2">
+              <a
+                href="https://docs.google.com/document/d/1uwSpzLlnMB9QCneW5IQ0oRAw3d-z87lJLmjPRer417E/edit?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-6 py-3 bg-muted hover:bg-primary hover:text-white rounded-full font-medium transition-all duration-300 border border-border/50 hover:border-primary"
               >
                 <Download size={18} />
-                Download Resume
-              </button>
+                View Resume
+              </a>
             </div>
           </div>
         </div>

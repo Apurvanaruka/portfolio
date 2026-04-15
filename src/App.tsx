@@ -13,6 +13,7 @@ import Projects from './sections/Projects';
 import Education from './sections/Education';
 import Contact from './sections/Contact';
 import Footer from './sections/Footer';
+import  { Hyperspeed } from './components/Hyperspeed';
 
 // Register GSAP plugins
 gsap.registerPlugin(ScrollTrigger);
@@ -51,8 +52,10 @@ function App() {
   }, []);
 
   return (
-    <div ref={mainRef} className="relative min-h-screen bg-background overflow-x-hidden">
-      {/* Grain overlay */}
+    <div ref={mainRef} className="relative min-h-screen bg-transparent overflow-x-hidden">
+      <div className="fixed inset-0 z-[-1] pointer-events-none">
+        <Hyperspeed />
+      </div>
       <div className="grain-overlay" />
       
       {/* Navigation */}

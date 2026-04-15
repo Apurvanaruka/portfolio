@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
-import { Menu, X } from 'lucide-react';
+import { useState, useEffect, useRef } from 'react';
+import { Menu, X, FileText } from 'lucide-react';
+import gsap from 'gsap';
 
 const navLinks = [
   { name: 'Home', href: '#hero' },
@@ -14,6 +15,32 @@ const navLinks = [
 export default function Navigation() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const navRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Initial entrance animation
+    const ctx = gsap.context(() => {
+      gsap.fromTo(
+        '.nav-item',
+        { opacity: 0, y: -20 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.6,
+          stagger: 0.08,
+          ease: 'power3.out',
+          delay: 0.2, // slight delay on load
+        }
+      );
+      gsap.fromTo(
+        '#nav-resume-btn',
+        { opacity: 0, scale: 0.8 },
+        { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(1.5)', delay: 0.8 }
+      );
+    }, navRef);
+
+    return () => ctx.revert();
+  }, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,6 +63,7 @@ export default function Navigation() {
   return (
     <>
       <nav
+        ref={navRef}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
           isScrolled
             ? 'bg-background/80 backdrop-blur-xl border-b border-border/50'
@@ -60,13 +88,25 @@ export default function Navigation() {
                   key={link.name}
                   href={link.href}
                   onClick={(e) => handleLinkClick(e, link.href)}
-                  className="relative px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors duration-300 group"
+                  className="nav-item relative px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors duration-300 group opacity-0"
                 >
                   {link.name}
                   <span className="absolute bottom-0 left-1/2 -translate-x-1/2 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-1/2" />
                 </a>
               ))}
             </div>
+
+            {/* Resume CTA — always visible on desktop */}
+            <a
+              id="nav-resume-btn"
+              href="https://docs.google.com/document/d/1uwSpzLlnMB9QCneW5IQ0oRAw3d-z87lJLmjPRer417E/edit?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden md:inline-flex opacity-0 items-center gap-2 ml-4 px-5 py-2 bg-primary text-white text-sm font-semibold rounded-full hover:shadow-lg hover:shadow-primary/30 hover:scale-105 transition-all duration-300"
+            >
+              <FileText size={15} />
+              View Resume
+            </a>
 
             {/* Mobile Menu Button */}
             <button
@@ -97,13 +137,21 @@ export default function Navigation() {
               href={link.href}
               onClick={(e) => handleLinkClick(e, link.href)}
               className="text-2xl font-medium text-foreground hover:text-primary transition-colors"
-              style={{
-                animationDelay: `${index * 0.1}s`,
-              }}
+              style={{ animationDelay: `${index * 0.1}s` }}
             >
               {link.name}
             </a>
           ))}
+          {/* Resume link in mobile menu */}
+          <a
+            href="https://docs.google.com/document/d/1uwSpzLlnMB9QCneW5IQ0oRAw3d-z87lJLmjPRer417E/edit?usp=sharing"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 mt-2 px-8 py-3 bg-primary text-white font-semibold rounded-full hover:shadow-lg hover:shadow-primary/30 transition-all duration-300"
+          >
+            <FileText size={18} />
+            View Resume
+          </a>
         </div>
       </div>
     </>
